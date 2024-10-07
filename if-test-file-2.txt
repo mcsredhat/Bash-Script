@@ -1,0 +1,66 @@
+Simple Example (Check if a file exists and whether it’s a regular file)
+
+#!/bin/bash
+
+# Simple example: Check if a file exists and if it is a regular file
+
+file="/etc/hosts"  # Define the file path to check
+
+if [ -e "$file" ]; then  # Check if the file exists using the -e test
+    echo "$file exists."  # If true, print that the file exists
+    if [ -f "$file" ]; then  # Check if the file is a regular file using the -f test
+        echo "$file is a regular file."  # If true, print that it is a regular file
+    else
+        echo "$file is not a regular file."  # If false, print that it's not a regular file
+    fi
+else
+    echo "$file does not exist."  # If the file doesn't exist, print this message
+fi  # End of the if-else structure
+
+
+===================================================================================================================
+ Medium Example (Check if a directory exists and if it's writable)
+#!/bin/bash
+
+# Medium example: Check if a directory exists and if it is writable
+
+directory="/tmp/my_test_directory"  # Specify the directory to check
+
+if [ -d "$directory" ]; then  # Check if the directory exists using the -d test
+    echo "$directory exists."  # If true, print that the directory exists
+    if [ -w "$directory" ]; then  # Check if the directory is writable using the -w test
+        echo "$directory is writable."  # If true, print that the directory is writable
+    else
+        echo "$directory is not writable."  # If false, print that it's not writable
+    fi
+else
+    echo "$directory does not exist. Creating it..."  # If the directory doesn't exist, print this message
+    mkdir -p "$directory"  # Create the directory using mkdir
+    echo "$directory created successfully."  # Print a success message after creating the directory
+fi  # End of the if-else structure
+
+=====================================================================================================================
+Advanced Example (Check if a file is executable and its size)
+
+#!/bin/bash
+
+# Advanced example: Check if a file is executable and if its size is greater than 0 bytes
+
+file="/usr/bin/bash"  # Specify the file to check (an executable binary in this case)
+
+if [ -e "$file" ]; then  # Check if the file exists
+    echo "$file exists."  # If true, print that the file exists
+    if [ -x "$file" ]; then  # Check if the file is executable using the -x test
+        echo "$file is executable."  # If true, print that the file is executable
+    else
+        echo "$file is not executable."  # If false, print that the file is not executable
+    fi
+
+    if [ -s "$file" ]; then  # Check if the file is not empty (greater than 0 bytes) using the -s test
+        echo "$file has a size greater than 0 bytes."  # If true, print that the file is not empty
+    else
+        echo "$file is empty."  # If false, print that the file is empty
+    fi
+else
+    echo "$file does not exist."  # If the file doesn't exist, print this message
+fi  # End of the if-else structure

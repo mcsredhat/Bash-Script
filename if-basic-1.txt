@@ -1,0 +1,68 @@
+Simple Example (Check if a number is positive, negative, or zero)
+bash
+Copy code
+#!/bin/bash
+
+# Simple example: Check if a number is positive, negative, or zero
+
+num=5  # Assign a value to the variable 'num'
+
+if [ $num -gt 0 ]; then  # Check if 'num' is greater than 0 (positive)
+    echo "$num is positive"  # If true, print that the number is positive
+elif [ $num -lt 0 ]; then  # Check if 'num' is less than 0 (negative)
+    echo "$num is negative"  # If true, print that the number is negative
+else
+    echo "$num is zero"  # If neither condition is true, print that the number is zero
+fi  # End of the if-elif-else structure
+
+
+
+====================================================================================================================
+Medium Example (Check if a file exists and if it’s readable)
+bash
+Copy code
+#!/bin/bash
+
+# Medium example: Check if a file exists and whether it is readable
+
+file="/etc/hosts"  # Specify the file to check
+
+if [ -e "$file" ]; then  # Check if the file exists
+    echo "$file exists."  # If true, print that the file exists
+    if [ -r "$file" ]; then  # Check if the file is readable
+        echo "$file is readable."  # If true, print that the file is readable
+    else
+        echo "$file is not readable."  # If false, print that the file is not readable
+    fi
+elif [ ! -e "$file" ]; then  # Check if the file does not exist
+    echo "$file does not exist."  # If true, print that the file does not exist
+else
+    echo "Unknown error."  # If neither condition is met, print an error message
+fi  # End of the if-elif-else structure
+
+
+
+====================================================================================================================
+Advanced Example (Check user input, validate it, and perform a task)
+bash
+Copy code
+#!/bin/bash
+
+# Advanced example: Check user input for a number, validate the range, and perform a task
+
+read -p "Enter a number between 1 and 10: " num  # Prompt user for a number and store in 'num'
+
+if [ -z "$num" ]; then  # Check if 'num' is empty (user did not input anything)
+    echo "No input provided. Please enter a valid number."  # If true, print a warning
+elif ! [[ "$num" =~ ^[0-9]+$ ]]; then  # Check if the input is not a number using a regex pattern
+    echo "Invalid input. Please enter a numeric value."  # If true, print an invalid input message
+elif [ $num -ge 1 ] && [ $num -le 10 ]; then  # Check if the number is between 1 and 10 (inclusive)
+    echo "You entered a valid number: $num"  # If true, print a success message
+    if [ $num -lt 5 ]; then  # Additional check: if the number is less than 5
+        echo "Your number is less than 5."  # If true, print this message
+    else
+        echo "Your number is 5 or greater."  # If false, print this message
+    fi
+else
+    echo "Number out of range. Please enter a number between 1 and 10."  # If the number is out of range, print this
+fi  # End of the if-elif-else structure

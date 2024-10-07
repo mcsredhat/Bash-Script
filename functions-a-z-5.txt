@@ -1,0 +1,215 @@
+
+### **1. Simple Example**
+
+This script checks if a line exists in a file and adds it if it’s missing, using local/global variables and functions.
+
+
+#!/bin/bash
+
+# Global variable for the file to modify
+global_file="/etc/named.conf"  # Define the file we want to check and modify
+
+# Global array to hold the lines to check/add
+global_lines=("options {"
+              "    directory \"/var/named\";"
+              "    listen-on port 53 { 127.0.0.1; };"
+              "};")
+
+# Function to add lines to the file if they are missing
+add_lines_if_missing() {
+    local file="$1"  # Local variable holding the file path
+    local -n lines_list="$2"  # Local reference to the array of lines to add
+    for line in "${lines_list[@]}"; do  # Loop through each line in the array
+        if ! grep -Fxq "$line" "$file"; then  # Check if the line exists in the file
+            echo "$line" | sudo tee -a "$file" > /dev/null  # Add line to file if not found
+        fi
+    done
+}
+
+# Function to test if the file exists before proceeding
+check_file_exists() {
+    local file="$1"  # Local variable holding the file path
+    if [[ ! -f "$file" ]]; then  # If the file does not exist
+        echo "Error: File '$file' does not exist."  # Output error message
+        exit 1  # Exit with error code 1
+    fi
+}
+
+# Main function that controls the script
+main() {
+    check_file_exists "$global_file"  # Check if the file exists before proceeding
+    add_lines_if_missing "$global_file" global_lines  # Add missing lines to the file
+    echo "Script completed successfully."  # Output success message
+}
+
+main  # Execute the main function
+```
+
+### **Explanation**:
+1. **Global Variables**: `global_file` holds the path of the file, `global_lines` is an array with lines to check/add.
+2. **Functions**:
+   - **`add_lines_if_missing`**: Adds missing lines to the file using a loop.
+   - **`check_file_exists`**: Ensures the file exists before making changes.
+3. **File Test**: `[[ ! -f "$file" ]]` checks if the file exists.
+4. **Error Handling**: `exit 1` is used if the file doesn’t exist.
+5. **Loop**: Iterates through the `global_lines` array.
+6. **Array**: `global_lines` contains the lines to add.
+
+---
+
+### **2. Medium Example**
+
+This example includes error handling, checks for missing lines, and supports multiple file sections.
+
+```bash
+#!/bin/bash
+
+# Global variable for the file to modify
+global_file="/etc/named.conf"  # Global variable that stores the file path
+
+# Global array for the main configuration section
+global_config_lines=(
+    "# Main DNS configuration"
+    "options {"
+    "    directory \"/var/named\";"
+    "    allow-query { localhost; };"
+    "};"
+)
+
+# Local function to test if a file exists
+check_file_exists() {
+    local file="$1"  # Local variable for file path
+    if [[ ! -f "$file" ]]; then  # Test if file does not exist
+        echo "Error: File '$file' does not exist."  # Print error message
+        exit 1  # Exit with error code 1
+    fi
+}
+
+# Local function to add missing lines from an array to the file
+add_missing_lines() {
+    local file="$1"  # Local variable for file path
+    local -n lines="$2"  # Reference the array passed in
+    local missing=false  # Local flag for missing lines
+
+    for line in "${lines[@]}"; do  # Loop through the array of lines
+        if ! grep -Fxq "$line" "$file"; then  # Check if the line is missing
+            echo "Missing line: '$line'"  # Inform which line is missing
+            missing=true  # Set the missing flag to true
+        fi
+    done
+
+    # If any lines were missing, add them
+    if [ "$missing" = true ]; then  # Check if any lines are missing
+        echo "Adding missing lines to $file"  # Inform user
+        for line in "${lines[@]}"; do
+            echo "$line" | sudo tee -a "$file" > /dev/null  # Add missing lines
+        done
+    else
+        echo "All lines are already present."  # All lines exist
+    fi
+}
+
+# Main function to control the script
+main() {
+    check_file_exists "$global_file"  # Call function to check file existence
+    add_missing_lines "$global_file" global_config_lines  # Add missing lines
+}
+
+main  # Run the main function
+```
+
+### **Explanation**:
+1. **Global Variables**: `global_file` holds the file path, `global_config_lines` contains the lines to check and add.
+2. **Functions**:
+   - **`check_file_exists`**: Tests if the file exists.
+   - **`add_missing_lines`**: Adds missing lines from an array if they are not already in the file.
+3. **File Test**: `[[ ! -f "$file" ]]` tests file existence.
+4. **Error Handling**: Exits with `exit 1` if the file is missing.
+5. **Loop**: Iterates through the array to check for and add missing lines.
+6. **Array**: `global_config_lines` holds the configuration section lines.
+
+---
+
+### **3. Advanced Example**
+
+This advanced script handles multiple configurations, has local and global variables, and checks for multiple sections to be added.
+
+```bash
+#!/bin/bash
+
+# Global variables for file paths
+global_file="/etc/named.conf"  # Global variable to store the file path
+
+# Global arrays for different configuration sections
+global_main_config=(
+    "# Main DNS configuration"
+    "options {"
+    "    directory \"/var/named\";"
+    "    allow-query { localhost; };"
+    "};"
+)
+
+global_forwarders_config=(
+    "# Forwarders configuration"
+    "forwarders {"
+    "    8.8.8.8;"
+    "    8.8.4.4;"
+    "};"
+)
+
+# Function to check if file exists
+check_file_exists() {
+    local file="$1"  # Local variable for file path
+    if [[ ! -f "$file" ]]; then  # Test if file does not exist
+        echo "Error: File '$file' does not exist."  # Print error message
+        exit 1  # Exit with error code 1
+    fi
+}
+
+# Function to add missing lines
+add_missing_lines() {
+    local file="$1"  # Local variable for file path
+    local -n lines="$2"  # Reference to array passed
+    local section="$3"  # Local variable for section name
+
+    local missing=false  # Local flag to track if any lines are missing
+    echo "Checking $section configuration..."  # Inform user about the section being checked
+
+    for line in "${lines[@]}"; do  # Loop through the array of lines
+        if ! grep -Fxq "$line" "$file"; then  # If line is missing
+            echo "Line missing: '$line'"  # Inform user about the missing line
+            missing=true  # Set the missing flag to true
+        fi
+    done
+
+    if [ "$missing" = true ]; then  # If any lines were missing
+        echo "Adding missing $section configuration..."  # Inform user
+        for line in "${lines[@]}"; do  # Loop through again to add lines
+            echo "$line" | sudo tee -a "$file" > /dev/null  # Append lines to file
+        done
+    else
+        echo "$section configuration is already present."  # Inform user
+    fi
+}
+
+# Main function to manage the script execution
+main() {
+    check_file_exists "$global_file"  # Call function to check if file exists
+
+    # Add multiple sections by calling the add_missing_lines function with different arrays
+    add_missing_lines "$global_file" global_main_config "Main"
+    add_missing_lines "$global_file" global_forwarders_config "Forwarders"
+}
+
+main  # Execute the main function
+```
+
+### **Explanation**:
+1. **Global Variables**: `global_file`, `global_main_config`, and `global_forwarders_config` hold the file path and configuration lines.
+2. **Functions**:
+   - **`check_file_exists`**: Tests file existence.
+   - **`add_missing_lines`**: Adds missing lines from the array, and it can handle multiple sections.
+3. **File Test**: `[[ ! -f "$file" ]]` checks if the file exists.
+4. **Error Handling**: Exits with `exit 1` if the file doesn’t exist.
+5. **Loop**: Iterates over the arrays (`global_main_config` and `global_forwarders_config`).
+6. **Arrays**: Separate arrays (`global_main_config` and `global_forward
