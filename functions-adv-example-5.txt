@@ -45,17 +45,7 @@ main() {
 main  # Execute the main function
 ```
 
-### **Explanation**:
-1. **Global Variables**: `global_file` holds the path of the file, `global_lines` is an array with lines to check/add.
-2. **Functions**:
-   - **`add_lines_if_missing`**: Adds missing lines to the file using a loop.
-   - **`check_file_exists`**: Ensures the file exists before making changes.
-3. **File Test**: `[[ ! -f "$file" ]]` checks if the file exists.
-4. **Error Handling**: `exit 1` is used if the file doesn’t exist.
-5. **Loop**: Iterates through the `global_lines` array.
-6. **Array**: `global_lines` contains the lines to add.
 
----
 
 ### **2. Medium Example**
 
@@ -118,17 +108,7 @@ main() {
 main  # Run the main function
 ```
 
-### **Explanation**:
-1. **Global Variables**: `global_file` holds the file path, `global_config_lines` contains the lines to check and add.
-2. **Functions**:
-   - **`check_file_exists`**: Tests if the file exists.
-   - **`add_missing_lines`**: Adds missing lines from an array if they are not already in the file.
-3. **File Test**: `[[ ! -f "$file" ]]` tests file existence.
-4. **Error Handling**: Exits with `exit 1` if the file is missing.
-5. **Loop**: Iterates through the array to check for and add missing lines.
-6. **Array**: `global_config_lines` holds the configuration section lines.
 
----
 
 ### **3. Advanced Example**
 
@@ -202,14 +182,3 @@ main() {
 }
 
 main  # Execute the main function
-```
-
-### **Explanation**:
-1. **Global Variables**: `global_file`, `global_main_config`, and `global_forwarders_config` hold the file path and configuration lines.
-2. **Functions**:
-   - **`check_file_exists`**: Tests file existence.
-   - **`add_missing_lines`**: Adds missing lines from the array, and it can handle multiple sections.
-3. **File Test**: `[[ ! -f "$file" ]]` checks if the file exists.
-4. **Error Handling**: Exits with `exit 1` if the file doesn’t exist.
-5. **Loop**: Iterates over the arrays (`global_main_config` and `global_forwarders_config`).
-6. **Arrays**: Separate arrays (`global_main_config` and `global_forward
