@@ -1,10 +1,7 @@
-Here’s the rewritten bash script that incorporates **arrays**, **lists**, and uses both **local** and **global** variables, with detailed comments explaining each line. The goal remains the same: to check if certain lines exist in a file (e.g., `/etc/named.conf`) and add them if they are missing.
-
----
 
 ### **Advanced Bash Script Example with Arrays, Local/Global Variables, Lists**
 
-```bash
+
 #!/bin/bash
 
 # Global variable that defines the file we want to modify
@@ -71,47 +68,3 @@ main() {
 main  # Start the main script execution
 ```
 
-### Detailed Explanation:
-
-#### **Global Variables:**
-- **`global_file_to_check`**: This global variable stores the path to the file we want to modify (`/etc/named.conf`).
-- **`global_lines_to_add`**: This global array contains the lines that we are checking for in the file. If they don’t exist, the script adds them. These lines include DNS forwarders and their corresponding comments.
-
-#### **Function `add_lines_if_missing`:**
-- **Parameters**:
-  - **`file="$1"`**: A local variable to hold the file path passed as an argument.
-  - **`local -n lines_list="$2"`**: This declares a local variable `lines_list` as a reference to the array passed as the second argument. The `-n` flag allows us to reference an existing array (whether it's global or local).
-  - **`local missing_flag=false`**: A local flag variable initialized to `false`. It tracks whether any lines are missing.
-- **For Loop**: 
-  - Iterates over each line in the array (`lines_list`). For each line, it checks if it exists in the file using `grep -Fxq`.
-  - If a line is missing, it sets `missing_flag=true` and informs the user which line is missing.
-- **If Condition**: 
-  - After the loop, if any line is missing (`missing_flag=true`), it appends the entire block of lines to the file using `sudo tee -a`.
-  - If no lines are missing, it prints that all lines are already present in the file.
-
-#### **Main Function:**
-- **Local Array `local_additional_lines`**: 
-  - This is an additional array defined inside the `main` function, demonstrating the use of local variables. It contains lines for a separate configuration section (e.g., logging settings).
-- **Calling `add_lines_if_missing`**:
-  - First, it calls the function with the global variables `global_file_to_check` and `global_lines_to_add` to check for and add the DNS forwarding lines.
-  - Then, it calls the function again with the same file but using the **local array** `local_additional_lines` to optionally add a separate block of configurations.
-
-#### **Main Execution:**
-- The script ends by calling the `main` function, which manages the flow of execution by checking both the global lines and optional local lines.
-
----
-
-### Summary of New Concepts:
-
-1. **Global Variables**:
-   - `global_file_to_check` and `global_lines_to_add` are global variables accessible throughout the script.
-2. **Local Variables**:
-   - `file`, `lines_list`, and `missing_flag` inside the `add_lines_if_missing` function are local variables. The `local_additional_lines` array in the `main` function is another local variable.
-3. **Array Reference (`local -n`)**:
-   - This allows passing arrays by reference to the function, so the function can operate on any array (global or local).
-4. **For Loops**:
-   - Used to iterate over arrays of lines to check if they exist in the file.
-5. **Function Usage**:
-   - The script uses functions to break the logic into reusable pieces, handling different parts of the configuration checking and addition process.
-
-This structure enhances flexibility and readability by using variables, arrays, and functions to simplify the script. Let me know if you need further clarifications or adjustments!

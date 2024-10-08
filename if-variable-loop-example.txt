@@ -1,10 +1,7 @@
-Here is the requested bash script with detailed comments explaining each line. The script includes the use of **variables**, a **for loop**, and logic to **search for lines in a file**, and **add them if they don’t exist**. The file being modified in these examples is `/etc/named.conf`.
-
----
 
 ### 1. **Simple Example** (Add lines to a file if not already present)
 
-```bash
+
 #!/bin/bash
 
 # Define the file to be modified
@@ -30,15 +27,8 @@ for line in "${lines_to_add[@]}"; do
 done  # End of the loop
 ```
 
-### Explanation:
-- **Variables**: `file_to_check` holds the path to `/etc/named.conf`, while `lines_to_add` is an array containing the configuration lines.
-- **For Loop**: Iterates over the lines to check if they exist in the file.
-- **`grep -Fxq`**: Searches for the exact match of the line in the file.
-- **`tee -a`**: Appends the line to the file if it doesn’t exist.
 
----
-
-### 2. **Medium Example** (Add multiple configurations if missing, including comments)
+### 2. (Add multiple configurations if missing, including comments)
 
 ```bash
 #!/bin/bash
@@ -67,14 +57,8 @@ for line in "${lines_to_add[@]}"; do
 done  # End of the loop
 ```
 
-### Explanation:
-- **Comments in Configuration**: The script includes comments around the configuration for clarity when modifying `/etc/named.conf`.
-- **Array of lines**: Each line, including the comments, is checked and added if not already present.
-- **For Loop**: Iterates over the list of lines, checking if they exist in the file using `grep`.
 
----
-
-### 3. **Advanced Example** (Validate and add multiple sections of configurations)
+### 3. (Validate and add multiple sections of configurations)
 
 ```bash
 #!/bin/bash
@@ -112,23 +96,3 @@ if [ "$lines_missing" = true ]; then  # Check if any line was missing by evaluat
 else
     echo "All lines are already present in $file_to_check"  # Inform the user that all lines are already present
 fi  # End of the if-else block
-```
-
-### Explanation:
-- **Flag `lines_missing`**: A flag is used to check if any line is missing. If any line is missing, it sets the flag to `true`.
-- **For Loop**: The first loop checks if any lines are missing, while the second loop adds the entire section if any part of it is missing.
-- **If Condition**: If the flag is set to `true` (i.e., some lines are missing), the script appends the entire section to the file.
-
----
-
-### Key Concepts and Comments:
-
-1. **Variables**: Store the path to the file (`file_to_check`) and the lines (`lines_to_add`) to be checked and added.
-2. **For Loops**: Iterate over each line to search for its presence in the file.
-3. **Conditionals**: Use `if` statements to determine whether lines already exist in the file and whether they need to be added.
-4. **`grep` Usage**: `grep -Fxq` is used to search for exact, whole-line matches in the file, and the `-q` flag ensures quiet operation.
-5. **Appending Lines**: `tee -a` is used with `sudo` to append missing lines to the file, suppressing standard output with `> /dev/null`.
-
----
-
-This fully commented script provides a clear understanding of how each component works and how to manage configurations in a file like `/etc/named.conf` using **loops**, **variables**, and **conditional statements**. Let me know if you'd like more customization!

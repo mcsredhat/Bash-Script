@@ -139,20 +139,5 @@ lftp 192.168.75.21 -u linuxcbt1     # Connect to server with specified username
 lftp linuxcbtserv2                  # Connect to server with default anonymous login
 ```
 
-### Explanation:
-
-1. **Check VSFTPD Package**: Verifies if VSFTPD (Very Secure FTP Daemon) is installed on the system.
-
-2. **Edit vsftpd.conf**: Opens the VSFTPD configuration file (`/etc/vsftpd/vsftpd.conf`) for editing to configure anonymous FTP settings.
-
-3. **Configure vsftpd.conf**: Sets various parameters in `vsftpd.conf` to enable anonymous access, allow uploads, specify directory and logging settings, and configure ownership.
-
-4. **SELinux Settings**: Checks SELinux booleans related to FTP and sets `allow_ftpd_anon_write` to allow anonymous write access. Also sets SELinux context (`public_content_rw_t`) for `/var/ftp`.
-
-5. **Firewall Configuration**: Opens TCP ports 20 (FTP data transfer) and 21 (FTP control connection) using `firewall-cmd` for `firewalld` or `iptables` for traditional firewall setups.
-
-6. **Service Management**: Restarts VSFTPD service (`systemctl restart` or `service restart`) to apply the configuration changes.
-
-7. **FTP Testing**: Tests FTP connectivity locally (`ftp localhost`) and optionally connects to remote FTP servers using `lftp` with specified credentials.
 
 
