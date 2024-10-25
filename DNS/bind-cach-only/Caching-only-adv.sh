@@ -1,22 +1,19 @@
 #!/bin/bash
 
+# Define the configuration file path
+CONFIG_FILE="/etc/named.conf"
+
 # Array of required packages to install
 PACKAGES=("net-tools" "firewalld" "unbound" "bind" "bind-utils")
 
-# Array of firewall ports to configure for DNS
-FIREWALL_PORTS=(53)
-
-# Array of lines to be added to /etc/named.conf
+# Define the configuration lines we want to ensure within the options block
 NAMED_CONF_LINES=(
     "listen-on port 53 { 127.0.0.1; };"
     "listen-on-v6 port 53 { ::1; };"
-    "allow-query { any; };"
+
 )
 
-# Array of SELinux booleans to configure
-SELINUX_BOOLS=("named_write_master_zones" "allow_httpd_mod_auth_ntlm_winbind" "allow_ypbind")
-
-# Function to check if a package is installed
+# Function to check if each package is installed, and install if not
 check_package_installed() {
     for package in "${PACKAGES[@]}"; do
         if ! rpm -qa | grep -qw "$package"; then
@@ -30,7 +27,6 @@ check_package_installed() {
 }
 
 # Function to check command execution status
-# This will exit if the previous command fails
 check_status() {
     if [ $? -ne 0 ]; then
         echo "Error executing command: $1"
@@ -38,101 +34,66 @@ check_status() {
     fi
 }
 
-# Function to add a line to a configuration file if it doesn't already exist
-add_line_if_not_exists() {
-    local file="$1"       # First argument: file path
-    shift                 # Shift arguments to access subsequent params
-    local lines=("$@")    # Remaining arguments: array of lines to add
+# Function to add or replace lines specifically within the options block
+add_or_replace_in_options_block() {
+    # Ensure the options block exists
+    if ! grep -q "^options\s*{" "$CONFIG_FILE"; then
+        echo "No options block found in $CONFIG_FILE. Adding one."
+        echo -e "options {\n};" | sudo tee -a "$CONFIG_FILE" > /dev/null
+    fi
 
-    for line in "${lines[@]}"; do
-        # Check if the line already exists in the file
-        if ! grep -qF "$line" "$file"; then
-            echo "Adding line: $line to $file"
-            echo "$line" | sudo tee -a "$file" > /dev/null  # Add line if not found
+    
+# Replace all instances of 'localhost' with 'any' in the options block
+    echo "Replacing all instances of 'localhost' with 'any' in options block..."
+    sudo sed -i "/^options\s*{/,/^};/s/localhost/any/g" "$CONFIG_FILE"
+
+
+    # Add required lines to options block only if they are not present
+    for line in "${NAMED_CONF_LINES[@]}"; do
+        # Check if the line already exists
+        if ! grep -qF "$line" "$CONFIG_FILE"; then
+            echo "Adding line: $line within options block in $CONFIG_FILE"
+            # Insert the line before the closing brace of the options block
+            sudo sed -i "/^options\s*{/,/^};/s/^};/    $line\n};/" "$CONFIG_FILE"
         else
-            echo "Line already exists: $line"
+            echo "Line already exists in options block: $line"
         fi
     done
 }
 
-# Function to configure firewall to allow specified ports
-configure_firewall() {
-    for port in "${FIREWALL_PORTS[@]}"; do
-        echo "Configuring firewall for TCP port $port..."
-        sudo firewall-cmd --zone=public --add-port=${port}/tcp --permanent
-        check_status "firewall-cmd --zone=public --add-port=${port}/tcp --permanent"
-        
-        # Add rule for iptables as well
-        sudo iptables -I INPUT -p tcp -m tcp --dport "$port" -j ACCEPT
-    done
-    echo "Reloading firewall to apply changes..."
-    sudo firewall-cmd --reload
-    sudo service iptables save
-    sudo service iptables restart
-}
 
-# Function to configure SELinux booleans for named and bind services
-configure_selinux() {
-    echo "Configuring SELinux booleans..."
-
-    # Loop through each SELinux boolean and set it to 'on'
-    for bool in "${SELINUX_BOOLS[@]}"; do
-        echo "Setting SELinux boolean: $bool"
-        sudo setsebool -P "$bool" on
-        check_status "setsebool -P $bool on"
-    done
-}
-
-# Function to configure named.conf settings
+# Function to configure named.conf
 configure_named_conf() {
-    named_conf="/etc/named.conf"
+    echo "Configuring named.conf with correct options..."
 
-    echo "Configuring named.conf to listen on localhost only and allow queries from any IP..."
-    
-    # Add lines from the NAMED_CONF_LINES array to the named.conf file if they don't already exist
-    add_line_if_not_exists "$named_conf" "${NAMED_CONF_LINES[@]}"
+    for line in "${NAMED_CONF_LINES[@]}"; do
+        add_or_replace_in_options_block "$line"
+    done
 
-    # Restart named service to apply configuration changes
-    echo "Restarting named service..."
-    sudo systemctl restart named
-    check_status "systemctl restart named"
+    # Validate configuration
+    if named-checkconf "$CONFIG_FILE"; then
+        echo "Configuration is valid. Restarting named service..."
+        sudo systemctl restart named
+        check_status "systemctl restart named"
+    else
+        echo "Configuration validation failed. Please check $CONFIG_FILE."
+        exit 1
+    fi
 }
 
-# Main function to organize the flow
+# Main function
 main() {
     echo "### Starting DNS Caching-Only Server Setup ###"
 
     # Step 1: Install required packages
     check_package_installed
 
-    # Step 2: Configure firewall for DNS port 53
-    configure_firewall
-
-    # Step 3: Configure SELinux settings
-    configure_selinux
-
-    # Step 4: Configure named.conf
-    configure_named_conf
-
-    # Step 5: Query DNS server at localhost
-    echo "Querying DNS server at localhost..."
-    dig @localhost
-    check_status "dig @localhost"
-
-    # Step 6: Query DNS server for a specific domain
-    echo "Querying DNS server for www.linuxcbt.com..."
-    dig @localhost www.linuxcbt.com
-    check_status "dig @localhost www.linuxcbt.com"
-
-    # Step 7: Check open UDP and TCP port 53 using netstat
-    echo "Checking open UDP port 53..."
-    netstat -nul | grep 53
-
-    echo "Checking open TCP port 53..."
-    netstat -ntl | grep 53
+    # Step 2: Configure named.conf
+ configure_named_conf
 
     echo "### DNS Caching-Only Server Setup Completed Successfully ###"
 }
 
 # Execute the main function
 main
+
