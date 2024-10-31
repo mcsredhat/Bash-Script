@@ -37,7 +37,7 @@ zone "linuxcbt.external" IN {
     type slave;
     masters {192.168.75.20;};
     file "/var/named/slaves/linuxcbt.external";
-    allow-update { none; };
+    #allow-update { none; };
 };
 
 # Restart named service to apply changes (if systemctl restart named.service fails, try service named reload)
