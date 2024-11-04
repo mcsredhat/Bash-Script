@@ -10,11 +10,12 @@ yum search mysql
 # Install MySQL server
 sudo yum -y install mysql-server
 
-# Verify installed files for mysql-server package
-sudo rpm -ql mysql-server
+# Allow MySQL service through the firewall
+sudo firewall-cmd --permanent --add-service=mysql
+sudo firewall-cmd --reload
 
-# Check the configuration file for MySQL (my.cnf)
-less /etc/my.cnf
+# Enable MySQL to connect to the network
+sudo setsebool -P mysql_connect_any 1
 
 # Enable MySQL service to start on boot
 sudo systemctl enable mysqld
