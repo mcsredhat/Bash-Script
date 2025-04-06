@@ -1,4 +1,4 @@
-Simple Example (Check if a file exists and whether it’s a regular file)
+#Simple Example (Check if a file exists and whether it’s a regular file)
 
 #!/bin/bash
 
@@ -19,7 +19,7 @@ fi  # End of the if-else structure
 
 
 ===================================================================================================================
- Medium Example (Check if a directory exists and if it's writable)
+# Medium Example (Check if a directory exists and if it's writable)
 #!/bin/bash
 
 # Medium example: Check if a directory exists and if it is writable
@@ -40,7 +40,7 @@ else
 fi  # End of the if-else structure
 
 =====================================================================================================================
-Advanced Example (Check if a file is executable and its size)
+#Advanced Example (Check if a file is executable and its size)
 
 #!/bin/bash
 

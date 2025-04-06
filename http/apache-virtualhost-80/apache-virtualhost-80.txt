@@ -1,7 +1,6 @@
 #### 1. Install Required Packages
 
-sudo yum install -y httpd mod_ssl openssl openssl-devel ca-certificates \
-php php-cli php-mysqlnd php-gd php-xml php-mbstring php-curl php-zip php-soap
+sudo yum install -y httpd mod_ssl openssl openssl-devel ca-certificates php php-cli php-mysqlnd php-gd php-xml php-mbstring php-curl php-zip php-soap
 
 #### 2. Enable and Start Services
 sudo systemctl enable httpd

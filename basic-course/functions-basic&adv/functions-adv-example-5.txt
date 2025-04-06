@@ -1,7 +1,7 @@
 
 ### **1. Simple Example**
 
-This script checks if a line exists in a file and adds it if it’s missing, using local/global variables and functions.
+#This script checks if a line exists in a file and adds it if it’s missing, using local/global variables and functions.
 
 
 #!/bin/bash
@@ -49,9 +49,8 @@ main  # Execute the main function
 
 ### **2. Medium Example**
 
-This example includes error handling, checks for missing lines, and supports multiple file sections.
+#This example includes error handling, checks for missing lines, and supports multiple file sections.
 
-```bash
 #!/bin/bash
 
 # Global variable for the file to modify
@@ -112,9 +111,8 @@ main  # Run the main function
 
 ### **3. Advanced Example**
 
-This advanced script handles multiple configurations, has local and global variables, and checks for multiple sections to be added.
+#This advanced script handles multiple configurations, has local and global variables, and checks for multiple sections to be added.
 
-```bash
 #!/bin/bash
 
 # Global variables for file paths

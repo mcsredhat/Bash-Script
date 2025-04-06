@@ -1,4 +1,4 @@
-Simple Example (Check if a number is positive, negative, or zero)
+#Simple Example (Check if a number is positive, negative, or zero)
 #!/bin/bash
 
 # Simple example: Check if a number is positive, negative, or zero
@@ -16,7 +16,7 @@ fi  # End of the if-elif-else structure
 
 
 ====================================================================================================================
-Medium Example (Check if a file exists and if it’s readable)
+#Medium Example (Check if a file exists and if it’s readable)
 #!/bin/bash
 
 # Medium example: Check if a file exists and whether it is readable
@@ -39,7 +39,7 @@ fi  # End of the if-elif-else structure
 
 
 ====================================================================================================================
-Advanced Example (Check user input, validate it, and perform a task)
+#Advanced Example (Check user input, validate it, and perform a task)
 
 #!/bin/bash
 

@@ -25,10 +25,11 @@ for line in "${lines_to_add[@]}"; do
         echo "Line already exists: '$line'"  # If the line exists, inform the user
     fi
 done  # End of the loop
+```
 
 
+### 2. (Add multiple configurations if missing, including comments)
 
-### 2. **Medium Example** (Add multiple configurations if missing, including comments)
 
 #!/bin/bash
 
@@ -54,9 +55,10 @@ for line in "${lines_to_add[@]}"; do
         echo "Configuration already exists: '$line'"  # Inform the user that the line already exists
     fi
 done  # End of the loop
+```
 
 
-### 3. **Advanced Example** (Validate and add multiple sections of configurations)
+### 3. (Validate and add multiple sections of configurations)
 
 
 #!/bin/bash
@@ -94,4 +96,3 @@ if [ "$lines_missing" = true ]; then  # Check if any line was missing by evaluat
 else
     echo "All lines are already present in $file_to_check"  # Inform the user that all lines are already present
 fi  # End of the if-else block
-
